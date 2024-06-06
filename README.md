@@ -1,19 +1,5 @@
 # dekar-dojo
 
-## Project setup
-```
-npm install
-```
+Dekar's Dojo is a site containing [Dekar's](https://www.twitch.tv/dekar173) games as VODs with information about runes/build/opponent
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+[Project's site](https://foxyg3n.github.io/dekar-dojo/)
