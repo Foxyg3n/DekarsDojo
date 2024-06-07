@@ -1,6 +1,6 @@
 <template>
-  <Navbar />
-  <router-view/>
+  <Navbar @logout="onLogout" :loggedIn="loggedIn" />
+  <router-view @login="onLogin" :loggedIn="loggedIn" />
   <Footer />
 </template>
 
@@ -13,18 +13,39 @@ export default {
     components: {
         Footer,
         Navbar
+    },
+    data() {
+        return {
+            loggedIn: false
+        }
+    },
+    methods: {
+        onLogin() {
+            this.loggedIn = true;
+        },
+        onLogout() {
+            this.loggedIn = false;
+        }
+    },
+    mounted() {
+        const token = localStorage.getItem('token');
+        if(token) {
+            this.loggedIn = true;
+        }
     }
 }
 </script>
 
 <style lang="scss">
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+
 body {
     margin: 0;
     min-height: 100vh;
 }
 
 #app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
+    font-family: 'Lato', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
