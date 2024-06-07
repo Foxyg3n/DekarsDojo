@@ -1,5 +1,5 @@
 <template>
-    <div :id="game.matchId" class="game">
+    <div :id="game.id" class="game">
         <h3>Rengar vs {{ game.againstChamp }} | {{ game.against }}</h3>
         <div class="game"></div>
     </div>
@@ -24,7 +24,7 @@ export default {
             const seconds = timestamp.time % 60;
             return `${hours}h ${minutes}m ${seconds}s`;
         }
-        
+
         const twitchOptions = {
             width: 650,
             height: 400,
@@ -33,7 +33,7 @@ export default {
             autoplay: false,
             parent: ["localhost"]
         };
-        new Twitch.Player(this.game.matchId, twitchOptions);
+        new Twitch.Player(this.game.id, twitchOptions);
     }
 }
 </script>

@@ -7,7 +7,7 @@
         </form>
     </header>
     <main class="games">
-        <Game v-for="game in games" :key="game.matchId" :game="game" />
+        <Game v-for="game in games" :key="game.id" :game="game" />
     </main>
 </template>
 
@@ -30,187 +30,15 @@ export default {
         onSubmit(e) {
             e.preventDefault();
             this.games = this.allGames.filter(game => game.againstChamp.toLowerCase().includes(this.search.toLowerCase()));
+        },
+        async fetchGames() {
+            const res = await fetch('api/games');
+            const data = await res.json();
+            return data;
         }
     },
-    created() {
-        this.games = [
-            {
-                "matchId": "KR_7074430688",
-                "streamId": 2147944779,
-                "timestamp": {
-                    "time": 22746
-                },
-                "against": "cqtoo",
-                "againstChamp": "XinZhao",
-                "runes": [
-                    {
-                        "id": 8021,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/FleetFootwork/FleetFootwork.png"
-                    },
-                    {
-                        "id": 9111,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/Triumph.png"
-                    },
-                    {
-                        "id": 9104,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/LegendAlacrity/LegendAlacrity.png"
-                    },
-                    {
-                        "id": 8014,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/CoupDeGrace/CoupDeGrace.png"
-                    },
-                    {
-                        "id": 8138,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Domination/EyeballCollection/EyeballCollection.png"
-                    },
-                    {
-                        "id": 8106,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Domination/UltimateHunter/UltimateHunter.png"
-                    }
-                ]
-            },
-            {
-                "matchId": "KR_7077545974",
-                "streamId": 2149833962,
-                "timestamp": {
-                    "time": 1587
-                },
-                "against": "cqtoo",
-                "againstChamp": "Nocturne",
-                "runes": [
-                    {
-                        "id": 8021,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/FleetFootwork/FleetFootwork.png"
-                    },
-                    {
-                        "id": 9111,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/Triumph.png"
-                    },
-                    {
-                        "id": 9104,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/LegendAlacrity/LegendAlacrity.png"
-                    },
-                    {
-                        "id": 8014,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/CoupDeGrace/CoupDeGrace.png"
-                    },
-                    {
-                        "id": 8138,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Domination/EyeballCollection/EyeballCollection.png"
-                    },
-                    {
-                        "id": 8106,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Domination/UltimateHunter/UltimateHunter.png"
-                    }
-                ]
-            },
-            {
-                "matchId": "KR_7077584551",
-                "streamId": 2149833962,
-                "timestamp": {
-                    "time": 3386
-                },
-                "against": "LSLovesMorello",
-                "againstChamp": "Lillia",
-                "runes": [
-                    {
-                        "id": 8021,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/FleetFootwork/FleetFootwork.png"
-                    },
-                    {
-                        "id": 9111,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/Triumph.png"
-                    },
-                    {
-                        "id": 9104,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/LegendAlacrity/LegendAlacrity.png"
-                    },
-                    {
-                        "id": 8014,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/CoupDeGrace/CoupDeGrace.png"
-                    },
-                    {
-                        "id": 8138,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Domination/EyeballCollection/EyeballCollection.png"
-                    },
-                    {
-                        "id": 8106,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Domination/UltimateHunter/UltimateHunter.png"
-                    }
-                ]
-            },
-            {
-                "matchId": "KR_7081059333",
-                "streamId": 2152531294,
-                "timestamp": {
-                    "time": 324
-                },
-                "against": "Heya",
-                "againstChamp": "Viego",
-                "runes": [
-                    {
-                        "id": 8021,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/FleetFootwork/FleetFootwork.png"
-                    },
-                    {
-                        "id": 9111,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/Triumph.png"
-                    },
-                    {
-                        "id": 9104,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/LegendAlacrity/LegendAlacrity.png"
-                    },
-                    {
-                        "id": 8014,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/CoupDeGrace/CoupDeGrace.png"
-                    },
-                    {
-                        "id": 8138,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Domination/EyeballCollection/EyeballCollection.png"
-                    },
-                    {
-                        "id": 8106,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Domination/UltimateHunter/UltimateHunter.png"
-                    }
-                ]
-            },
-            {
-                "matchId": "KR_7081060861",
-                "streamId": 2152531294,
-                "timestamp": {
-                    "time": 2334
-                },
-                "against": "역천리",
-                "againstChamp": "Karthus",
-                "runes": [
-                    {
-                        "id": 8021,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/FleetFootwork/FleetFootwork.png"
-                    },
-                    {
-                        "id": 9111,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/Triumph.png"
-                    },
-                    {
-                        "id": 9104,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/LegendAlacrity/LegendAlacrity.png"
-                    },
-                    {
-                        "id": 8014,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Precision/CoupDeGrace/CoupDeGrace.png"
-                    },
-                    {
-                        "id": 8138,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Domination/EyeballCollection/EyeballCollection.png"
-                    },
-                    {
-                        "id": 8106,
-                        "img": "https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/Domination/UltimateHunter/UltimateHunter.png"
-                    }
-                ]
-            }
-        ]
-        this.allGames = this.games;
+    async created() {
+        this.games = await this.fetchGames();
     }
 }
 </script>
