@@ -27,5 +27,15 @@ export default {
 <style lang="scss" scoped>
 nav {
     background: #0e0f13;
+    padding: 30px;
+
+    a {
+        font-weight: bold;
+        color: #2c3e50;
+
+        &.router-link-exact-active {
+        color: #42b983;
+        }
+    }
 }
 </style>
