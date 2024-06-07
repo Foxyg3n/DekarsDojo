@@ -69,10 +69,7 @@ header {
 form button {
     width: 40px;
     height: 40px;
-    cursor: pointer;
     background: #42b983;
-    border: none;
-    font-size: 1em;
     border-radius: 50%;
 }
 
@@ -98,6 +95,10 @@ form button {
 
 .add-game {
     margin-top: 20px;
+
+    button {
+        font-size: 1.5em;
+    }
 }
 
 .games {
