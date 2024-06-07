@@ -1,9 +1,9 @@
 <template>
     <header>
         <h1>Dekar's Dojo</h1>
-        <form>
+        <form @submit="onSubmit">
             <input v-model="search" type="text">
-            <button class="fas fa-search"></button>
+            <button type="submit" class="fas fa-search"></button>
         </form>
     </header>
     <main class="games">
@@ -26,9 +26,10 @@ export default {
             games: []
         }
     },
-    watch: {
-        search() {
-            this.games = this.allGames.filter(game => game.againstChamp.toLowerCase().includes(this.search.toLowerCase()))
+    methods: {
+        onSubmit(e) {
+            e.preventDefault();
+            this.games = this.allGames.filter(game => game.againstChamp.toLowerCase().includes(this.search.toLowerCase()));
         }
     },
     created() {
