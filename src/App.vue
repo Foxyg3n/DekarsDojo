@@ -41,7 +41,6 @@ export default {
 
 body {
     margin: 0;
-    min-height: 100vh;
 }
 
 input {
@@ -56,10 +55,21 @@ button {
 }
 
 #app {
+    display: flex;
+    flex-direction: column;
     font-family: 'Poppins', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 </style>

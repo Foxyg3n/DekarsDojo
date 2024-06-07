@@ -1,9 +1,11 @@
 <template>
-    <form @submit="onLogin">
-        <input type="password" v-model="password" placeholder="Password">
-        <button type="submit">🔍</button>
-        <p v-if="error" class="error">{{ error }}</p>
-    </form>
+    <main>
+        <form @submit="onLogin">
+            <input type="password" v-model="password" placeholder="Secret perfect 100iq code">
+            <button type="submit" class="fas fa-search"></button>
+            <p v-if="error" class="error">{{ error }}</p>
+        </form>
+    </main>
 </template>
 
 <script>
@@ -43,3 +45,35 @@ export default {
     }
 }
 </script>
+
+<style lang="scss" scoped>
+form {
+    position: relative;
+
+    input {
+        outline: none;
+        width: 250px;
+        border-radius: 50px;
+        border: none;
+        padding: 1em;
+        font-size: 1em;
+        background: #42b983;
+        color: white;
+
+        &::placeholder {
+            color: rgb(200, 255, 228);
+        }
+    }
+
+    button {
+        width: 40px;
+        height: 40px;
+        background: #fff;
+        border-radius: 50%;
+        position: absolute;
+        right: 0.5em;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+</style>
