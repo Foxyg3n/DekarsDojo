@@ -38,7 +38,8 @@ export default {
         }
     },
     async created() {
-        this.games = await this.fetchGames();
+        this.allGames = await this.fetchGames();
+        this.games = this.allGames;
     }
 }
 </script>

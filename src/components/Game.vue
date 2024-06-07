@@ -17,19 +17,20 @@ export default {
             }
         }
     },
-    mounted() {
-        function toStringFormat(timestamp) {
+    methods: {
+        toStringFormat(timestamp) {
             const hours = Math.floor(timestamp.time / 3600);
             const minutes = Math.floor((timestamp.time % 3600) / 60);
             const seconds = timestamp.time % 60;
             return `${hours}h ${minutes}m ${seconds}s`;
         }
-
+    },
+    mounted() {
         const twitchOptions = {
             width: 650,
             height: 400,
             video: this.game.streamId,
-            time: toStringFormat(this.game.timestamp),
+            time: this.toStringFormat(this.game.timestamp),
             autoplay: false,
             parent: ["localhost"]
         };
