@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import Games from '../views/Games.vue'
+import Games from '../views/GamesView.vue'
 import About from '../views/AboutView.vue'
 
 const routes = [
