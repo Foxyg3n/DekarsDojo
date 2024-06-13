@@ -5,9 +5,14 @@ require('dotenv').config()
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const bodyParser = require('body-parser');
+const { kill } = require('process');
+const { profile } = require('console');
+const { tryAddGame } = require('./games');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+// Authorization
 
 const generateToken = (user) => {
   const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '1h' });
@@ -38,8 +43,11 @@ app.post('/login', (req, res) => {
     }
 });
 
-app.get("/games", (req, res) => {
-    fs.readFile('games.json', 'utf8', (err, data) => {
+// Games
+
+app.get("/games", async (req, res) => {
+
+    fs.readFile('games.json', 'utf8', async (err, data) => {
         if (err) {
             return res.status(500).json({ message: 'Error reading file' });
         }
@@ -48,16 +56,37 @@ app.get("/games", (req, res) => {
     });
 });
 
-app.post("/games", (req, res) => {
-    validateToken(req, res, () => {
-        res.json({ message: 'Game created' });
-    });
-    // const { id } = req.params;
-    // const { streamId, timestamp } = req.body;
+app.post("/games", async (req, res) => {
+    validateToken(req, res, async () => {
+        const gameQuery = req.body;
+    
+        if(!gameQuery.matchId) {
+            res.status(400).json({ error: "Match ID is required" });
+            return;
+        }
+        if(!gameQuery.streamId) {
+            res.status(400).json({ error: "Stream ID is required" });
+            return;
+        }
+        if(!gameQuery.timestamp) {
+            res.status(400).json({ error: "Timestamp is required" });
+            return;
+        }
 
-    // if(!id) res.status(400).send("Match ID is required");
-    // if(!streamId) res.status(400).send("Stream ID is required");
-    // if(!timestamp) res.status(400).send("Timestamp is required");
+        const game = await tryAddGame(gameQuery);
+        res.send(game);
+    });
+
+    // const gameInfo = await rAPI.matchV5.getMatchById({
+    //     cluster: accounts[0].cluster,
+    //     matchId: id
+    // });
+    
+    // const game = await constructGame(gameInfo);
+    // game.id = id
+    // game.streamId = streamId;
+    // game.timestamp = timestamp;
+    // addGame(game);
 });
 
 app.listen(PORT, () => {

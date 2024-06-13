@@ -8,6 +8,7 @@
     "backend": "node server.js"
   },
   "dependencies": {
+    "@fightmegg/riot-api": "^0.0.20",
     "body-parser": "^1.20.2",
     "core-js": "^3.8.3",
     "dotenv": "^16.4.5",

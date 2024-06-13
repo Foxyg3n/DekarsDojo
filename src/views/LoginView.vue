@@ -52,7 +52,7 @@ form {
 
     input {
         outline: none;
-        width: 250px;
+        width: 280px;
         border-radius: 50px;
         border: none;
         padding: 1em;
