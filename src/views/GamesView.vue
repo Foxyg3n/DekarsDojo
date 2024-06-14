@@ -18,7 +18,7 @@
                 <input placeholder="2147944779" v-model="streamId" type="text">
             </div>
             <div class="form-control time-inputs">
-                <label for="time">Time</label>
+                <label for="time">Timestamp</label>
                 <div>
                     <input placeholder="5h" v-model="time.hours" type="text">
                     <input placeholder="3m" v-model="time.minutes" type="text">
@@ -184,6 +184,10 @@ main {
         display: flex;
         flex-direction: column;
         color: #42b983;
+        background: #18161f;
+        border-radius: 10px;
+        padding: 20px;
+        height: fit-content;
 
         .time-inputs div {
             display: flex;
@@ -192,7 +196,7 @@ main {
         }
 
         .form-control {
-            margin: 20px 0;
+            margin: 10px 0;
         }
 
         .form-control label {
@@ -223,6 +227,20 @@ main {
         .form-control-check input {
             flex: 2;
             height: 20px;
+        }
+
+        button {
+            font-family: inherit;
+            width: 100%;
+            height: 40px;
+            background: #42b983;
+            border: none;
+            border-radius: 50px;
+            color: #0e0f13;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s;
         }
     }
 }

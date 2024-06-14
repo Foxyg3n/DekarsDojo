@@ -16,7 +16,7 @@ const accounts = [
     }
 ]
 
-const rAPI = new RiotAPI("RGAPI-ca475110-dba4-4e14-ae72-cca215e363a2");
+const rAPI = new RiotAPI("RGAPI-fe12d178-fcdd-4b1e-beb0-fbf1e16fc7c1");
 
 let VERSION;
 let LOCALE = rAPI.ddragon.locale;
@@ -36,6 +36,7 @@ async function getSpellUrl(spellId) {
 }
 
 function getItemUrl(itemId) {
+    if(itemId == 0) return "https://www.deeplol.gg/images/icon_non_item.svg";
     return `https://ddragon.leagueoflegends.com/cdn/${VERSION}/img/item/${itemId}.png`;
 }
 
@@ -51,7 +52,6 @@ async function getRuneUrls(runeIds) {
 // Construct game objects
 
 async function constructProfile(profileInfo) {
-    console.log(JSON.stringify(profileInfo, null, 2));
     const profile = {
         name: profileInfo.riotIdGameName,
         champion: profileInfo.championName,
@@ -72,8 +72,7 @@ async function constructProfile(profileInfo) {
         ],
         runes: {
             primaryRunes: await getRuneUrls(profileInfo.perks.styles[0].selections.map(rune => rune.perk)),
-            secondaryRunes: await getRuneUrls(profileInfo.perks.styles[1].selections.map(rune => rune.perk)),
-            statRunes: await getRuneUrls(Object.values(profileInfo.perks.statPerks))
+            secondaryRunes: await getRuneUrls(profileInfo.perks.styles[1].selections.map(rune => rune.perk))
         }
     }
     return profile;
@@ -121,6 +120,39 @@ function addGame(game) {
             console.log('Game saved!');
         });
     });
+}
+
+function updateGames() {
+    fs.readFile('games.json', 'utf8', async (err, data) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        games = JSON.parse(data);
+        for (let game of games) {
+            try {
+                const gameInfo = await rAPI.matchV5.getMatchById({
+                    cluster: accounts[0].cluster,
+                    matchId: game.id
+                });
+                const updatedGame = await constructGame(gameInfo);
+                updatedGame.id = game.id;
+                updatedGame.streamId = game.streamId;
+                updatedGame.timestamp = game.timestamp;
+                games.splice(games.indexOf(game), 1, updatedGame);
+            } catch(error) {
+                console.error(error);
+            }
+        }
+        fs.writeFile('games.json', JSON.stringify(games, null, 2), (err) => {
+            if (err) {
+                console.error(err);
+                return;
+            }
+            console.log('Games updated!');
+        });
+    });
+
 }
 
 module.exports = { constructGame, tryAddGame };
