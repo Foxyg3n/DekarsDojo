@@ -1,16 +1,19 @@
 const app = require('express')();
-const PORT = 5000;
+const port = process.env.PORT || 8000;
 
 require('dotenv').config()
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const bodyParser = require('body-parser');
-const { kill } = require('process');
-const { profile } = require('console');
 const { tryAddGame } = require('./games');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+app.use(express.static(
+    path.resolve(__dirname, 'dist'),
+    { maxAge: '1y', etag: false},
+));
 
 // Authorization
 
@@ -33,7 +36,7 @@ const validateToken = (req, res, next) => {
     });
 };
 
-app.post('/login', (req, res) => {
+app.post('/api/login', (req, res) => {
     const password = req.body.password;
     if (password === process.env.ADMIN_PASSWORD) {
         const token = generateToken({ user: 'admin' });
@@ -45,7 +48,7 @@ app.post('/login', (req, res) => {
 
 // Games
 
-app.get("/games", async (req, res) => {
+app.get("/api/games", async (req, res) => {
 
     fs.readFile('games.json', 'utf8', async (err, data) => {
         if (err) {
@@ -56,7 +59,7 @@ app.get("/games", async (req, res) => {
     });
 });
 
-app.post("/games", async (req, res) => {
+app.post("/api/games", async (req, res) => {
     validateToken(req, res, async () => {
         const gameQuery = req.body;
     
@@ -76,19 +79,12 @@ app.post("/games", async (req, res) => {
         const game = await tryAddGame(gameQuery);
         res.send(game);
     });
-
-    // const gameInfo = await rAPI.matchV5.getMatchById({
-    //     cluster: accounts[0].cluster,
-    //     matchId: id
-    // });
-    
-    // const game = await constructGame(gameInfo);
-    // game.id = id
-    // game.streamId = streamId;
-    // game.timestamp = timestamp;
-    // addGame(game);
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+app.get("*", () => {
+    res.sendFile(path.join(__dirname, 'dist/index.html'));
+})
+
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
 });
