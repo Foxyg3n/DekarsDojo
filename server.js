@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config({ path: '.env.local' })
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const bodyParser = require('body-parser');
@@ -7,16 +7,18 @@ const express = require('express');
 const path = require('path');
 
 const app = express();
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 3000;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.use(express.static(
-    path.resolve(__dirname, 'dist'),
-    { maxAge: '1y', etag: false},
-));
-
+if(process.env.ENV != 'development') {
+    app.use(express.static(
+        path.resolve(__dirname, 'dist'),
+        { maxAge: '1y', etag: false},
+    ));
+}
+    
 // Authorization
 
 const generateToken = (user) => {
@@ -83,9 +85,11 @@ app.post("/api/games", async (req, res) => {
     });
 });
 
-app.get("*", () => {
-    res.sendFile(path.join(__dirname, 'dist/index.html'));
-})
+if(process.env.ENV != 'development') {
+    app.get("*", () => {
+        res.sendFile(path.join(__dirname, 'dist/index.html'));
+    });
+}
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

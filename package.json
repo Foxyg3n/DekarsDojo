@@ -5,7 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "backend": "node server.js"
+    "backend": "node server.js",
+    "dev": "npm-run-all --parallel serve backend"
   },
   "dependencies": {
     "@fightmegg/riot-api": "^0.0.20",
@@ -14,6 +15,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
+    "npm-run-all": "^4.1.5",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3"
   },
