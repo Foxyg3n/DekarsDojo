@@ -6,6 +6,7 @@
             <button type="submit" class="fas fa-search"></button>
         </form>
         <button class="show-add-game" v-if="loggedIn" @click="toggleAddGame">+</button>
+        <div class="debug"></div>
     </header>
     <div :class="['add-game-container', showAddGame ? 'show' : '']">
         <form class="add-game" @submit="addGame">
@@ -29,7 +30,7 @@
         </form>
     </div>
     <main class="games">
-        <Game v-for="game in games" :key="game.id" :game="game" />
+        <Game :loggedIn="loggedIn" @delete="deleteGame" v-for="game in games" :key="game.id" :game="game" />
     </main>
 </template>
 
@@ -47,6 +48,7 @@ export default {
     emits: ['login'],
     data() {
         return {
+            debugBox: {},
             matchId: '',
             streamId: '',
             time: {
@@ -73,14 +75,28 @@ export default {
         toggleAddGame() {
             this.showAddGame = !this.showAddGame;
         },
-        addGame() {
+        debugSuccess(message) {
+            this.debugBox.innerHTML = message;
+            this.debugBox.style.color = '#42b983';
+            document.body.scrollIntoView({ behavior: 'smooth' });
+        },
+        debugError(message) {
+            this.debugBox.innerHTML = message;
+            this.debugBox.style.color = '#EF5350';
+            document.body.scrollIntoView({ behavior: 'smooth' });
+        },
+        addGame(e) {
+            e.preventDefault();
             const gameQuery = {
                 matchId: this.matchId,
                 streamId: parseInt(this.streamId),
-                timestamp: (parseInt(this.time.hours) * 3600) + (parseInt(this.time.minutes) * 60) + parseInt(this.time.seconds)
+                timestamp: (parseInt(this.time.hours || 0)) * 3600 + (parseInt(this.time.minutes || 0)) * 60 + (parseInt(this.time.seconds || 0))
             }
 
-            if(!gameQuery.matchId || !gameQuery.streamId || !gameQuery.timestamp) return console.log('Please fill all fields');
+            if(!gameQuery.matchId || !gameQuery.streamId || !gameQuery.timestamp) {
+                this.debugError('Please fill in all fields');
+                return;
+            }
 
             fetch('api/games', {
                 method: 'POST',
@@ -92,6 +108,11 @@ export default {
             })
             .then(res => res.json())
             .then(data => {
+                if(data.error) {
+                    console.error(data.error);
+                    this.debugError(data.error);
+                    return;
+                }
                 this.allGames.push(data);
                 this.games = this.allGames;
                 this.matchId = '';
@@ -102,6 +123,24 @@ export default {
                     seconds: ''
                 };
                 this.showAddGame = false;
+                this.debugSuccess('Game added successfully');
+            });
+        },
+        deleteGame(id) {
+            fetch(`api/games/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            .then(data => {
+                if(data.ok) {
+                    this.allGames = this.allGames.filter(game => game.id !== id);
+                    this.games = this.allGames;
+                    this.debugSuccess('Game deleted successfully');
+                } else {
+                    this.debugError('Error deleting game');
+                }
             });
         },
         async fetchGames() {
@@ -110,6 +149,9 @@ export default {
             console.log(data);
             return data;
         }
+    },
+    mounted() {
+        this.debugBox = document.querySelector('.debug');
     },
     async created() {
         this.allGames = await this.fetchGames();
@@ -164,6 +206,10 @@ main {
     height: 40px;
     background: #42b983;
     border-radius: 50%;
+}
+
+.debug {
+    color: #FFF;
 }
 
 .add-game-container {

@@ -1,10 +1,13 @@
 require('dotenv').config({ path: '.env.local' })
 const jwt = require('jsonwebtoken');
-const fs = require('fs');
 const bodyParser = require('body-parser');
 const { tryAddGame } = require('./games');
 const express = require('express');
 const path = require('path');
+const { MongoClient } = require('mongodb');
+
+const mongoUrl = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@dekarsdojo.bjfggtd.mongodb.net/?retryWrites=true&w=majority&appName=DekarsDojo`;
+const mongoClient = new MongoClient(mongoUrl);
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -50,17 +53,19 @@ app.post('/api/login', (req, res) => {
     }
 });
 
+app.get('/api/validate', (req, res) => {
+    validateToken(req, res, () => {
+        res.json({ message: 'Valid token' });
+    });
+});
+
 // Games
 
 app.get("/api/games", async (req, res) => {
-
-    fs.readFile('games.json', 'utf8', async (err, data) => {
-        if (err) {
-            return res.status(500).json({ message: 'Error reading file' });
-        }
-        const games = JSON.parse(data);
-        res.json(games);
-    });
+    await mongoClient.connect();
+    const db = mongoClient.db('DekarsDojoDb');
+    const games = await db.collection('Games').find().toArray();
+    res.send(games);
 });
 
 app.post("/api/games", async (req, res) => {
@@ -80,8 +85,26 @@ app.post("/api/games", async (req, res) => {
             return;
         }
 
-        const game = await tryAddGame(gameQuery);
+        await mongoClient.connect();
+        const db = mongoClient.db('DekarsDojoDb');
+        const games = db.collection('Games');
+        const existingGame = await games.findOne({ id: gameQuery.matchId });
+        if (existingGame) {
+            res.status(400).json({ error: "Game already exists" });
+            return;
+        }
+        const game = await tryAddGame(gameQuery, mongoClient);
         res.send(game);
+    });
+});
+
+app.delete("/api/games/:id", async (req, res) => {
+    validateToken(req, res, async () => {
+        await mongoClient.connect();
+        const db = mongoClient.db('DekarsDojoDb');
+        const games = db.collection('Games');
+        await games.deleteOne({ id: req.params.id });
+        res.send({ id: req.params.id });
     });
 });
 

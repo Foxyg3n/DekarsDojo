@@ -27,10 +27,15 @@ export default {
             this.loggedIn = false;
         }
     },
-    mounted() {
+    async mounted() {
         const token = localStorage.getItem('token');
         if(token) {
-            this.loggedIn = true;
+            const result = await fetch('api/validate', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if(result.ok) this.loggedIn = true;
         }
     }
 }
@@ -65,7 +70,7 @@ button {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
-    color: #2c3e50;
+    color: #445a6f;
     min-height: 100vh;
 }
 

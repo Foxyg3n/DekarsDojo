@@ -1,5 +1,5 @@
 const { RiotAPI, PlatformId } = require('@fightmegg/riot-api');
-const fs = require('fs');
+require('dotenv').config({ path: '.env.local' });
 
 const accounts = [
     {
@@ -16,7 +16,7 @@ const accounts = [
     }
 ]
 
-const rAPI = new RiotAPI("RGAPI-fe12d178-fcdd-4b1e-beb0-fbf1e16fc7c1");
+const rAPI = new RiotAPI(process.env.RIOT_API_KEY);
 
 let VERSION;
 let LOCALE = rAPI.ddragon.locale;
@@ -85,7 +85,7 @@ async function constructGame(gameInfo) {
     return game;
 }
 
-async function tryAddGame(gameQuery) {
+async function tryAddGame(gameQuery, mongoClient) {
     try {
         const gameInfo = await rAPI.matchV5.getMatchById({
             cluster: accounts[0].cluster,
@@ -95,7 +95,7 @@ async function tryAddGame(gameQuery) {
         game.id = gameQuery.matchId;
         game.streamId = gameQuery.streamId;
         game.timestamp = gameQuery.timestamp;
-        addGame(game);
+        await addGame(game, mongoClient);
         return game;
     } catch(error) {
         console.error(error);
@@ -103,56 +103,17 @@ async function tryAddGame(gameQuery) {
     }
 }
 
-function addGame(game) {
-    let games = [];
-    fs.readFile('games.json', 'utf8', async (err, data) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        games = JSON.parse(data);
-        games.push(game);
-        fs.writeFile('games.json', JSON.stringify(games, null, 2), (err) => {
-            if (err) {
-                console.error(err);
-                return;
-            }
-            console.log('Game saved!');
-        });
-    });
+async function addGame(game, mongoClient) {
+    await mongoClient.connect();
+    const db = mongoClient.db('DekarsDojoDb');
+    const games = db.collection('Games');
+    await games.insertOne(game);
 }
 
 function updateGames() {
-    fs.readFile('games.json', 'utf8', async (err, data) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        games = JSON.parse(data);
-        for (let game of games) {
-            try {
-                const gameInfo = await rAPI.matchV5.getMatchById({
-                    cluster: accounts[0].cluster,
-                    matchId: game.id
-                });
-                const updatedGame = await constructGame(gameInfo);
-                updatedGame.id = game.id;
-                updatedGame.streamId = game.streamId;
-                updatedGame.timestamp = game.timestamp;
-                games.splice(games.indexOf(game), 1, updatedGame);
-            } catch(error) {
-                console.error(error);
-            }
-        }
-        fs.writeFile('games.json', JSON.stringify(games, null, 2), (err) => {
-            if (err) {
-                console.error(err);
-                return;
-            }
-            console.log('Games updated!');
-        });
-    });
-
+    // read all games from the database
+    // alter games with new data
+    // update games in the database
 }
 
 module.exports = { constructGame, tryAddGame };
